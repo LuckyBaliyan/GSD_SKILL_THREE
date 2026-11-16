@@ -55,7 +55,8 @@
   --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Z-Index Hierarchy */
-  --z-canvas: 1;
+  --z-backdrop: 1;
+  --z-canvas: 2;
   --z-overlay: 10;
   --z-header: 100;
   --z-modal: 1000;

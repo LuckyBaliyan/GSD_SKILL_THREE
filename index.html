@@ -51,26 +51,34 @@
   <main id="main-content">
     <!-- Hero 3D Section -->
     <section class="hero-section" id="hero" aria-label="Hero 3D Showcase">
-      <!-- 3D WebGL Canvas Container -->
+      <!-- Architectural Typography Behind 3D Model -->
+      <div class="hero-backdrop" aria-hidden="true">
+        <p class="backdrop-tag">ATELIER MMXXVI EDITION</p>
+        <h1 class="backdrop-title">
+          SCULPTED FOR<br>
+          THE SENSES
+        </h1>
+        <p class="backdrop-sub">HAUTE WEARABLES • TIMEPIECES • ESSENCE</p>
+      </div>
+
+      <!-- 3D WebGL Canvas Viewport in Front of Typography -->
       <div id="webgl-container" aria-label="3D Interactive Luxury Viewport" role="region"></div>
 
-      <!-- Hero Content Overlay -->
-      <div class="hero-overlay">
-        <div class="hero-badge">
-          <span class="badge-dot"></span>
-          AUTUMN / WINTER 2026 EDITION
+      <!-- Peripheral Corner Controls: Left -->
+      <div class="hero-corner-left">
+        <div class="corner-badge">
+          <span class="corner-dot"></span>
+          LIMITED EDITION RUN
         </div>
-
-        <h1 class="hero-title">
-          SCULPTED FOR<br>
-          <span class="text-gold">THE SENSES</span>
-        </h1>
-
-        <p class="hero-subtitle">
-          Pure metallic geometry meets tactile human contours. An avant-garde exploration of wearable luxury eyewear, horology, and essence.
+        <p class="corner-desc">
+          Pure metallic geometry engineered for human contours.
         </p>
+        <p class="corner-hint">✦ Drag to rotate 360°</p>
+      </div>
 
-        <!-- Material Finish Customizer -->
+      <!-- Peripheral Corner Controls: Right -->
+      <div class="hero-corner-right">
+        <!-- Minimized Material Finish Selector -->
         <div class="variant-selector" role="group" aria-label="Select Material Finish">
           <span class="variant-label">Finish:</span>
           <div class="swatches-list">
@@ -80,27 +88,17 @@
           </div>
         </div>
 
-        <div class="hero-actions">
-          <a href="#collections" class="btn btn-primary" aria-label="Explore Collection">
-            <span>Explore Collection</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-          </a>
-          <a href="#craftsmanship" class="btn btn-secondary" aria-label="View Craftsmanship">
-            <span>View Craftsmanship</span>
-          </a>
-        </div>
-
-        <div class="hero-interaction-hint" aria-hidden="true">
-          <span class="hint-icon">✦</span>
-          <span>Drag to inspect 360° • Tilt reacts to motion</span>
-        </div>
+        <a href="#collections" class="btn-explore-link" aria-label="Explore Creations">
+          <span>Explore Creations</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
       </div>
 
       <!-- Floating 3D Model Switcher Pill Bar -->
       <nav class="model-switcher" aria-label="3D Model Selection">
-        <button class="switcher-pill active" data-model="0" aria-label="View Solaris Goggles">01 / SOLARIS GOGGLES</button>
-        <button class="switcher-pill" data-model="1" aria-label="View Aura Essence">02 / AURA ESSENCE</button>
-        <button class="switcher-pill" data-model="2" aria-label="View Chrono Obsidian">03 / CHRONO OBSIDIAN</button>
+        <button class="switcher-pill active" data-model="0" aria-label="View Solaris Goggles">01 / SOLARIS</button>
+        <button class="switcher-pill" data-model="1" aria-label="View Aura Essence">02 / ESSENCE</button>
+        <button class="switcher-pill" data-model="2" aria-label="View Chrono Obsidian">03 / CHRONO</button>
       </nav>
     </section>
   </main>
