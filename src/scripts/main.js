@@ -1,44 +1,57 @@
 /**
- * main.js — Application Entry Point
+ * main.js — Application Entry Point & Orchestrator
  * 
- * This file bootstraps the AURA luxury landing page. It initializes the
- * UI listeners, logs readiness, and serves as the coordinator between
- * the DOM layout and the Three.js 3D canvas engine.
+ * Bootstraps the AURA landing page, establishes DOM navigation listeners,
+ * and initializes the Three.js 3D hero stage with the floating sunglasses model.
  */
+
+import { createScene } from '../three/scene.js';
+import { createSunglassesModel } from '../three/models.js';
+import { createAnimator } from '../three/animator.js';
 
 /**
- * Initializes the landing page application.
- * Verifies that the required WebGL container exists in the DOM,
- * configures initial event listeners, and logs startup state.
+ * Initializes the entire application upon DOM load.
+ * Sets up navigation behaviors and starts the 3D WebGL hero viewport.
  */
 function initApp() {
-  console.log('[AURA] Atelier 3D Landing Experience Initialized.');
+  console.log('[AURA] Bootstrapping Atelier 3D Showcase...');
 
-  // Find the WebGL container where Three.js will mount
+  // Setup smooth navigation links
+  setupNavigation();
+
+  // Find canvas container
   const container = document.getElementById('webgl-container');
   if (!container) {
-    console.warn('[AURA] WebGL container #webgl-container not found in DOM.');
+    console.error('[AURA] Cannot find #webgl-container in DOM.');
     return;
   }
 
-  // Set up smooth scroll behavior for header links
-  setupNavigation();
+  // 1. Initialize Three.js scene, camera, lights, and renderer
+  const { scene, camera, renderer } = createScene(container);
+
+  // 2. Build and attach the procedural luxury sunglasses model
+  const sunglasses = createSunglassesModel();
+  scene.add(sunglasses);
+
+  // 3. Start 60 FPS float physics and mouse parallax loop
+  createAnimator(scene, camera, renderer, sunglasses, container);
+
+  console.log('[AURA] 3D Hero Viewport successfully running at 60 FPS.');
 }
 
 /**
- * Sets up smooth scrolling for internal anchor links and updates active state.
- * Adds click listeners to navigation links to prevent abrupt jumps.
+ * Sets up smooth scrolling and active tab state for header navigation links.
  */
 function setupNavigation() {
   const navLinks = document.querySelectorAll('.nav-link');
 
   navLinks.forEach((link) => {
-    link.addEventListener('click', (event) => {
+    link.addEventListener('click', () => {
       navLinks.forEach((item) => item.classList.remove('active'));
       link.classList.add('active');
     });
   });
 }
 
-// Wait for the DOM to be fully loaded before starting the application
+// Start application when DOM is ready
 window.addEventListener('DOMContentLoaded', initApp);
