@@ -6,8 +6,12 @@
  */
 
 import * as THREE from 'three';
-import { metalMaterial, glassMaterial, liquidMaterial } from './materials.js';
-import { createPerfumeLabelTexture, createWatchDialTexture } from './textures.js';
+import { metalMaterial, glassMaterial } from './materials.js';
+import {
+  createPerfumeLabelTexture,
+  createWatchDialTexture,
+  createWatchCasebackTexture
+} from './textures.js';
 import { createSolarisGoggleModel } from './goggle.js';
 
 // Re-export modern aerodynamic goggle model
@@ -15,23 +19,21 @@ export { createSolarisGoggleModel };
 export const createSunglassesModel = createSolarisGoggleModel;
 
 /**
- * Creates a procedural faceted luxury perfume bottle with brand atelier label.
- * 
- * @returns {THREE.Group} A Three.js Group containing perfume bottle meshes
+ * Creates a procedural opaque faceted luxury perfume bottle with brand label.
  */
 export function createPerfumeModel() {
   const group = new THREE.Group();
 
-  // 1. Faceted Glass Bottle Body (Octagonal Cylinder)
+  // 1. Opaque Lacquer Octagonal Bottle Body
   const bottleGeo = new THREE.CylinderGeometry(0.72, 0.78, 1.5, 8);
   const bottleMesh = new THREE.Mesh(bottleGeo, glassMaterial);
   group.add(bottleMesh);
 
-  // 2. Liquid Essence (Nested inside glass)
-  const liquidGeo = new THREE.CylinderGeometry(0.58, 0.64, 1.25, 8);
-  const liquidMesh = new THREE.Mesh(liquidGeo, liquidMaterial);
-  liquidMesh.position.set(0, -0.08, 0);
-  group.add(liquidMesh);
+  // 2. Metallic Gold Pedestal Base Rim
+  const baseGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.08, 8);
+  const baseMesh = new THREE.Mesh(baseGeo, metalMaterial);
+  baseMesh.position.set(0, -0.74, 0);
+  group.add(baseMesh);
 
   // 3. Luxury Brand Atelier Label on Front Facet
   const labelGeo = new THREE.PlaneGeometry(0.52, 0.65);
@@ -44,7 +46,7 @@ export function createPerfumeModel() {
   labelMesh.position.set(0, -0.04, 0.75);
   group.add(labelMesh);
 
-  // 4. Metallic Gold Collar & Atomizer Cap
+  // 4. Metallic Gold Collar & Heavy Magnetic Cap
   const collarGeo = new THREE.CylinderGeometry(0.24, 0.28, 0.25, 24);
   const collarMesh = new THREE.Mesh(collarGeo, metalMaterial);
   collarMesh.position.set(0, 0.88, 0);
@@ -52,7 +54,13 @@ export function createPerfumeModel() {
   const capGeo = new THREE.BoxGeometry(0.55, 0.55, 0.55);
   const capMesh = new THREE.Mesh(capGeo, metalMaterial);
   capMesh.position.set(0, 1.25, 0);
-  group.add(collarMesh, capMesh);
+
+  // Top metallic coin crest on cap
+  const coinGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.02, 16);
+  const coinMesh = new THREE.Mesh(coinGeo, metalMaterial);
+  coinMesh.position.set(0, 1.53, 0);
+
+  group.add(collarMesh, capMesh, coinMesh);
 
   group.rotation.set(0.12, -0.25, 0);
   group.scale.set(1.2, 1.2, 1.2);
@@ -60,14 +68,12 @@ export function createPerfumeModel() {
 }
 
 /**
- * Creates a procedural luxury timepiece with branded dial, hands, and link strap.
- * 
- * @returns {THREE.Group} A Three.js Group containing watch meshes
+ * Creates a procedural luxury timepiece with detailed front and exhibition caseback.
  */
 export function createWatchModel() {
   const group = new THREE.Group();
 
-  // 1. Watch Case Body & Bezel
+  // 1. Watch Case Body & Front Bezel
   const caseGeo = new THREE.CylinderGeometry(0.85, 0.85, 0.16, 32);
   const caseMesh = new THREE.Mesh(caseGeo, metalMaterial);
   const bezelGeo = new THREE.TorusGeometry(0.82, 0.05, 16, 32);
@@ -76,7 +82,7 @@ export function createWatchModel() {
   bezelMesh.rotateX(Math.PI / 2);
   group.add(caseMesh, bezelMesh);
 
-  // 2. High-Precision Watch Dial with Brand Mark & Hour Markers
+  // 2. High-Precision Watch Dial (Front Face)
   const dialGeo = new THREE.CylinderGeometry(0.78, 0.78, 0.02, 32);
   const dialMat = new THREE.MeshStandardMaterial({
     map: createWatchDialTexture(),
@@ -85,11 +91,32 @@ export function createWatchModel() {
   });
   const dialMesh = new THREE.Mesh(dialGeo, dialMat);
   dialMesh.position.set(0, 0.07, 0);
-  // Rotate texture upright towards top
   dialMesh.rotation.y = -Math.PI / 2;
   group.add(dialMesh);
 
-  // 3. Gold Watch Hands & Center Pin
+  // 3. Detailed Exhibition Caseback (Rear Face)
+  const backGeo = new THREE.CylinderGeometry(0.84, 0.84, 0.02, 32);
+  const backMat = new THREE.MeshStandardMaterial({
+    map: createWatchCasebackTexture(),
+    roughness: 0.25,
+    metalness: 0.85
+  });
+  const backMesh = new THREE.Mesh(backGeo, backMat);
+  backMesh.position.set(0, -0.08, 0);
+  backMesh.rotation.x = Math.PI;
+  backMesh.rotation.y = Math.PI / 2;
+  group.add(backMesh);
+
+  // 4. Six Titanium Perimeter Screws on Caseback
+  for (let s = 0; s < 6; s++) {
+    const angle = (s * Math.PI) / 3;
+    const screwGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.03, 8);
+    const screw = new THREE.Mesh(screwGeo, metalMaterial);
+    screw.position.set(Math.cos(angle) * 0.77, -0.082, Math.sin(angle) * 0.77);
+    group.add(screw);
+  }
+
+  // 5. Watch Hands, Center Pin & Crown Knob
   const handHourGeo = new THREE.BoxGeometry(0.035, 0.02, 0.45);
   const handHour = new THREE.Mesh(handHourGeo, metalMaterial);
   handHour.position.set(0, 0.09, -0.2);
@@ -99,19 +126,13 @@ export function createWatchModel() {
   handMin.position.set(0.2, 0.09, 0.1);
   handMin.rotateY(0.8);
 
-  const pinGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.04, 16);
-  const pin = new THREE.Mesh(pinGeo, metalMaterial);
-  pin.position.set(0, 0.09, 0);
-  group.add(handHour, handMin, pin);
-
-  // 4. Crown Adjustment Knob on Side
   const crownGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.15, 16);
   crownGeo.rotateZ(Math.PI / 2);
   const crown = new THREE.Mesh(crownGeo, metalMaterial);
   crown.position.set(0.92, 0, 0);
-  group.add(crown);
+  group.add(handHour, handMin, crown);
 
-  // 5. Segmented Link Bracelet (Top and bottom straps)
+  // 6. Segmented Link Bracelet (Top and bottom straps)
   for (let i = 0; i < 4; i++) {
     const linkGeo = new THREE.BoxGeometry(0.6, 0.12, 0.28);
     const topLink = new THREE.Mesh(linkGeo, metalMaterial);

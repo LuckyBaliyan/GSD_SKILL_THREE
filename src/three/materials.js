@@ -82,15 +82,14 @@ export const rubberMaterial = new THREE.MeshStandardMaterial({
   metalness: 0.05
 });
 
-// 5. Shared Glass Material (Perfume bottle glass)
+// 5. Opaque Luxury Lacquer Material (Perfume bottle flacon body)
 export const glassMaterial = new THREE.MeshPhysicalMaterial({
   color: FINISH_PALETTES.gold.glass,
-  metalness: 0.1,
-  roughness: 0.05,
-  transmission: 0.75,
-  transparent: true,
-  opacity: 0.92,
-  reflectivity: 0.9
+  metalness: 0.15,
+  roughness: 0.12,
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.04,
+  reflectivity: 1.0
 });
 
 // 6. Shared Liquid Essence Material (Inside perfume bottle)
