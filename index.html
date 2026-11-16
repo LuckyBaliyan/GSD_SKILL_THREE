@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="./src/styles/base.css">
   <link rel="stylesheet" href="./src/styles/header.css">
   <link rel="stylesheet" href="./src/styles/hero.css">
+  <link rel="stylesheet" href="./src/styles/switcher.css">
 </head>
 <body>
 
@@ -69,6 +70,16 @@
           Pure metallic geometry meets tactile human contours. An avant-garde exploration of wearable luxury eyewear, horology, and essence.
         </p>
 
+        <!-- Material Finish Customizer -->
+        <div class="variant-selector" role="group" aria-label="Select Material Finish">
+          <span class="variant-label">Finish:</span>
+          <div class="swatches-list">
+            <button class="swatch-btn swatch-gold active" data-finish="gold" aria-label="Obsidian Gold Finish" title="Obsidian Gold"></button>
+            <button class="swatch-btn swatch-noir" data-finish="noir" aria-label="Midnight Noir Finish" title="Midnight Noir"></button>
+            <button class="swatch-btn swatch-rose" data-finish="rose" aria-label="Champagne Rose Finish" title="Champagne Rose"></button>
+          </div>
+        </div>
+
         <div class="hero-actions">
           <a href="#collections" class="btn btn-primary" aria-label="Explore Collection">
             <span>Explore Collection</span>
@@ -81,9 +92,16 @@
 
         <div class="hero-interaction-hint" aria-hidden="true">
           <span class="hint-icon">✦</span>
-          <span>Move cursor to tilt • Interactive 3D Model</span>
+          <span>Drag to inspect 360° • Tilt reacts to motion</span>
         </div>
       </div>
+
+      <!-- Floating 3D Model Switcher Pill Bar -->
+      <nav class="model-switcher" aria-label="3D Model Selection">
+        <button class="switcher-pill active" data-model="0" aria-label="View Solaris Goggles">01 / SOLARIS GOGGLES</button>
+        <button class="switcher-pill" data-model="1" aria-label="View Aura Essence">02 / AURA ESSENCE</button>
+        <button class="switcher-pill" data-model="2" aria-label="View Chrono Obsidian">03 / CHRONO OBSIDIAN</button>
+      </nav>
     </section>
   </main>
 

@@ -1,84 +1,131 @@
 /**
- * animator.js — Float Physics & Mouse Parallax Loop
+ * animator.js — Float Physics, Parallax & 360° Drag Inertia Engine
  * 
- * Drives the 60 FPS requestAnimationFrame render loop with harmonic floating
- * physics and linear interpolation (lerp) for silky smooth cursor parallax.
+ * Handles pointer drag interaction with momentum damping, harmonic vertical floating,
+ * subtle cursor parallax tilt, and drives the model switcher transition updates.
  */
 
 /**
- * Creates and starts the animation loop for the 3D model and viewport.
+ * Initializes and starts the unified 60 FPS animation loop with pointer drag controls.
  * 
- * @param {THREE.Scene} scene - The active Three.js scene
- * @param {THREE.PerspectiveCamera} camera - The active camera
- * @param {THREE.WebGLRenderer} renderer - The WebGL renderer
- * @param {THREE.Group} modelGroup - The 3D model group to animate
+ * @param {THREE.Scene} scene - Active Three.js scene
+ * @param {THREE.PerspectiveCamera} camera - Active camera
+ * @param {THREE.WebGLRenderer} renderer - WebGL renderer
+ * @param {THREE.Group} rootGroup - Container group holding the 3D models
  * @param {HTMLElement} container - Canvas container for event scoping
- * @returns {Object} Control methods to stop or adjust the animation
+ * @param {Object} switcher - Model switcher controller instance
  */
-export function createAnimator(scene, camera, renderer, modelGroup, container) {
-  // Cursor tracking coordinates (target = actual mouse, current = smooth lerped value)
-  let targetMouseX = 0;
-  let targetMouseY = 0;
-  let currentMouseX = 0;
-  let currentMouseY = 0;
+export function createAnimator(scene, camera, renderer, rootGroup, container, switcher) {
+  // Cursor tracking for gentle parallax
+  let targetMouseX = 0, targetMouseY = 0;
+  let currentMouseX = 0, currentMouseY = 0;
 
-  let isRunning = true;
-  let animationFrameId = null;
-  const clock = { startTime: performance.now() };
+  // Pointer drag & inertia physics
+  let isDragging = false;
+  let prevPointerX = 0, prevPointerY = 0;
+  let dragVelX = 0, dragVelY = 0;
+  let dragRotX = 0, dragRotY = 0;
+
+  let lastTime = performance.now();
+  const startTime = performance.now();
 
   /**
-   * Tracks mouse movement over the window and normalizes to -1 .. 1.
+   * Tracks mouse position for subtle idle parallax.
    */
-  function handleMouseMove(event) {
-    const x = (event.clientX / window.innerWidth) * 2 - 1;
-    const y = -(event.clientY / window.innerHeight) * 2 + 1;
-    targetMouseX = x;
-    targetMouseY = y;
+  function handleMouseMove(e) {
+    targetMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    targetMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
   }
 
-  window.addEventListener('mousemove', handleMouseMove, { passive: true });
+  /**
+   * Starts pointer drag rotation on canvas mousedown or touchstart.
+   */
+  function handlePointerDown(e) {
+    isDragging = true;
+    prevPointerX = e.clientX || (e.touches && e.touches[0].clientX);
+    prevPointerY = e.clientY || (e.touches && e.touches[0].clientY);
+    dragVelX = 0;
+    dragVelY = 0;
+  }
 
   /**
-   * Main render loop executing on every screen refresh (target 60 FPS).
+   * Rotates the 3D root group directly with pointer movement.
+   */
+  function handlePointerMove(e) {
+    if (!isDragging) return;
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+    const deltaX = clientX - prevPointerX;
+    const deltaY = clientY - prevPointerY;
+
+    dragRotY += deltaX * 0.009;
+    dragRotX += deltaY * 0.009;
+
+    dragVelX = deltaX * 0.009;
+    dragVelY = deltaY * 0.009;
+
+    prevPointerX = clientX;
+    prevPointerY = clientY;
+  }
+
+  /**
+   * Releases pointer drag and transfers momentum to inertia damping.
+   */
+  function handlePointerUp() {
+    isDragging = false;
+  }
+
+  // Register pointer and touch listeners
+  window.addEventListener('mousemove', handleMouseMove, { passive: true });
+  container.addEventListener('pointerdown', handlePointerDown);
+  window.addEventListener('pointermove', handlePointerMove);
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
+
+  /**
+   * Main 60 FPS animation loop.
    */
   function animate() {
-    if (!isRunning) return;
+    requestAnimationFrame(animate);
 
-    animationFrameId = requestAnimationFrame(animate);
+    const now = performance.now();
+    const deltaTime = Math.min((now - lastTime) * 0.001, 0.1);
+    lastTime = now;
+    const elapsedTime = (now - startTime) * 0.001;
 
-    // Calculate elapsed time in seconds
-    const elapsedTime = (performance.now() - clock.startTime) * 0.001;
+    // 1. Advance model switcher transition easing
+    if (switcher && typeof switcher.update === 'function') {
+      switcher.update(deltaTime);
+    }
 
-    // 1. Smoothly interpolate (lerp) towards target mouse coordinates
-    const lerpFactor = 0.05;
-    currentMouseX += (targetMouseX - currentMouseX) * lerpFactor;
-    currentMouseY += (targetMouseY - currentMouseY) * lerpFactor;
+    // 2. Smoothly interpolate parallax cursor
+    currentMouseX += (targetMouseX - currentMouseX) * 0.05;
+    currentMouseY += (targetMouseY - currentMouseY) * 0.05;
 
-    // 2. Harmonic Idle Float (Sinusoidal Bobbing)
-    const floatOffset = Math.sin(elapsedTime * 1.6) * 0.12;
-    modelGroup.position.y = floatOffset;
+    // 3. Apply inertia friction damping when not dragging
+    if (!isDragging) {
+      dragRotY += dragVelX;
+      dragRotX += dragVelY;
+      dragVelX *= 0.92;
+      dragVelY *= 0.92;
 
-    // 3. Subtle Ambient Idle Rotation
-    modelGroup.rotation.y += 0.004;
+      // Gentle continuous ambient rotation when user is idle
+      if (Math.abs(dragVelX) < 0.0005) {
+        dragRotY += 0.003;
+      }
+    }
 
-    // 4. Parallax Tilt based on smooth mouse coordinates
-    const tiltX = -currentMouseY * 0.35 + 0.1;
-    const tiltZ = -currentMouseX * 0.2;
-    modelGroup.rotation.x = tiltX;
-    modelGroup.rotation.z = tiltZ;
+    // 4. Combine harmonic vertical float with rotation
+    const floatY = Math.sin(elapsedTime * 1.5) * 0.1;
+    rootGroup.position.y = floatY;
 
-    // Render active scene and camera
+    // Apply combined rotations (drag angle + cursor parallax tilt)
+    rootGroup.rotation.x = dragRotX - currentMouseY * 0.15;
+    rootGroup.rotation.y = dragRotY + currentMouseX * 0.15;
+
     renderer.render(scene, camera);
   }
 
-  // Start the render loop
   animate();
-
-  return {
-    stop: () => {
-      isRunning = false;
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('mousemove', handleMouseMove);
-    }
-  };
 }

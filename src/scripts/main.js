@@ -1,50 +1,58 @@
 /**
  * main.js — Application Entry Point & Orchestrator
  * 
- * Bootstraps the AURA landing page, establishes DOM navigation listeners,
- * and initializes the Three.js 3D hero stage with the floating sunglasses model.
+ * Coordinates the DOM navigation, 3D WebGL hero stage, model switcher,
+ * pointer drag inertia, and live material finish customizers.
  */
 
+import * as THREE from 'three';
 import { createScene } from '../three/scene.js';
-import { createSunglassesModel } from '../three/models.js';
+import { createSunglassesModel, createPerfumeModel, createWatchModel } from '../three/models.js';
+import { createModelSwitcher } from '../three/switcher.js';
 import { createAnimator } from '../three/animator.js';
 
 /**
- * Initializes the entire application upon DOM load.
- * Sets up navigation behaviors and starts the 3D WebGL hero viewport.
+ * Bootstraps the landing page and 3D interaction engine on DOM load.
  */
 function initApp() {
-  console.log('[AURA] Bootstrapping Atelier 3D Showcase...');
+  console.log('[AURA] Bootstrapping 3D Luxury Experience with Multi-Model Engine...');
 
-  // Setup smooth navigation links
   setupNavigation();
 
-  // Find canvas container
   const container = document.getElementById('webgl-container');
-  if (!container) {
-    console.error('[AURA] Cannot find #webgl-container in DOM.');
-    return;
-  }
+  if (!container) return;
 
-  // 1. Initialize Three.js scene, camera, lights, and renderer
+  // 1. Initialize Scene & Lighting
   const { scene, camera, renderer } = createScene(container);
 
-  // 2. Build and attach the procedural luxury sunglasses model
-  const sunglasses = createSunglassesModel();
-  scene.add(sunglasses);
+  // 2. Pre-instantiate all three flagship luxury models inside a common root
+  const rootGroup = new THREE.Group();
+  scene.add(rootGroup);
 
-  // 3. Start 60 FPS float physics and mouse parallax loop
-  createAnimator(scene, camera, renderer, sunglasses, container);
+  const modelConfigs = [
+    { name: 'Solaris Goggles', group: createSunglassesModel(), baseScale: 1.15 },
+    { name: 'Aura Essence', group: createPerfumeModel(), baseScale: 1.2 },
+    { name: 'Chrono Obsidian', group: createWatchModel(), baseScale: 1.1 }
+  ];
 
-  console.log('[AURA] 3D Hero Viewport successfully running at 60 FPS.');
+  // 3. Initialize Model Switcher Controller
+  const modelSwitcher = createModelSwitcher(rootGroup, modelConfigs, (newIndex) => {
+    updateActivePill(newIndex);
+  });
+
+  // 4. Start 60 FPS Render Loop with 360° Drag & Parallax
+  createAnimator(scene, camera, renderer, rootGroup, container, modelSwitcher);
+
+  // 5. Connect DOM Controls (Switcher Pills & Color Swatches)
+  setupSwitcherControls(modelSwitcher);
+  setupSwatchControls(modelSwitcher);
 }
 
 /**
- * Sets up smooth scrolling and active tab state for header navigation links.
+ * Sets up smooth scrolling for header navigation links.
  */
 function setupNavigation() {
   const navLinks = document.querySelectorAll('.nav-link');
-
   navLinks.forEach((link) => {
     link.addEventListener('click', () => {
       navLinks.forEach((item) => item.classList.remove('active'));
@@ -53,5 +61,42 @@ function setupNavigation() {
   });
 }
 
-// Start application when DOM is ready
+/**
+ * Connects click listeners to model switcher pills.
+ */
+function setupSwitcherControls(modelSwitcher) {
+  const pills = document.querySelectorAll('.switcher-pill');
+  pills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      const modelIndex = parseInt(pill.dataset.model, 10);
+      modelSwitcher.switchModel(modelIndex);
+    });
+  });
+}
+
+/**
+ * Synchronizes the visual active state of switcher pills when model changes.
+ */
+function updateActivePill(activeIndex) {
+  const pills = document.querySelectorAll('.switcher-pill');
+  pills.forEach((pill, idx) => {
+    pill.classList.toggle('active', idx === activeIndex);
+  });
+}
+
+/**
+ * Connects click listeners to material finish swatches (Gold, Noir, Rose).
+ */
+function setupSwatchControls(modelSwitcher) {
+  const swatches = document.querySelectorAll('.swatch-btn');
+  swatches.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      swatches.forEach((item) => item.classList.remove('active'));
+      btn.classList.add('active');
+      const finishKey = btn.dataset.finish;
+      modelSwitcher.setFinish(finishKey);
+    });
+  });
+}
+
 window.addEventListener('DOMContentLoaded', initApp);
