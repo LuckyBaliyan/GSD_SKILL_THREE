@@ -8,10 +8,10 @@
 ### Hero 3D Viewport & Multi-Model Switcher
 
 - [x] **HERO3D-01**: User sees a floating central 3D model in the hero section with smooth idle float animation
-- [ ] **HERO3D-02**: User can switch the active 3D model between Sunglasses, Perfume Bottle, and Luxury Watch
-- [ ] **HERO3D-03**: User can rotate the 3D model 360° via click-and-drag with smooth inertia
+- [x] **HERO3D-02**: User can switch the active 3D model between Sunglasses, Perfume Bottle, and Luxury Watch
+- [x] **HERO3D-03**: User can rotate the 3D model 360° via click-and-drag with smooth inertia
 - [x] **HERO3D-04**: Model responds subtly to cursor movement with smooth parallax tilt
-- [ ] **HERO3D-05**: User can toggle color/material finishes (Obsidian Gold, Matte Black, Amber/Rose)
+- [x] **HERO3D-05**: User can toggle color/material finishes (Obsidian Gold, Matte Black, Amber/Rose)
 
 ### Dark Editorial Luxury UI & Navigation
 
@@ -54,10 +54,10 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | HERO3D-01 | Phase 2 | Complete |
-| HERO3D-02 | Phase 2 | Pending |
-| HERO3D-03 | Phase 2 | Pending |
+| HERO3D-02 | Phase 2 | Complete |
+| HERO3D-03 | Phase 2 | Complete |
 | HERO3D-04 | Phase 2 | Complete |
-| HERO3D-05 | Phase 2 | Pending |
+| HERO3D-05 | Phase 2 | Complete |
 | UI-01 | Phase 1 | Complete |
 | UI-02 | Phase 1 | Complete |
 | UI-03 | Phase 3 | Pending |
