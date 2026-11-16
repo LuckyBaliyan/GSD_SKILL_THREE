@@ -71,11 +71,15 @@ function createBrowBar() {
   const tubeGeo = new THREE.TubeGeometry(browCurve, 32, 0.038, 12, false);
   browGroup.add(new THREE.Mesh(tubeGeo, carbonFrameMaterial));
 
-  // Central aerodynamic vent slot above nose
+  // Central aerodynamic vent slot and luxury metallic brand badge
   const ventGeo = new THREE.BoxGeometry(0.18, 0.045, 0.06);
   const ventMesh = new THREE.Mesh(ventGeo, carbonFrameMaterial);
   ventMesh.position.set(0, 0.42, 0.02);
-  browGroup.add(ventMesh);
+
+  const badgeGeo = new THREE.BoxGeometry(0.1, 0.022, 0.065);
+  const badgeMesh = new THREE.Mesh(badgeGeo, metalMaterial);
+  badgeMesh.position.set(0, 0.42, 0.022);
+  browGroup.add(ventMesh, badgeMesh);
 
   return browGroup;
 }

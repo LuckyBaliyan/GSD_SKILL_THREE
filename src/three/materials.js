@@ -57,14 +57,14 @@ export const metalMaterial = new THREE.MeshPhysicalMaterial({
 // 2. High-Tech Panoramic Shield Visor Material (Iridium Mirror Reflective PBR)
 export const shieldLensMaterial = new THREE.MeshPhysicalMaterial({
   color: FINISH_PALETTES.gold.shield,
-  metalness: 0.88,
-  roughness: 0.05,
+  metalness: 0.92,
+  roughness: 0.04,
   clearcoat: 1.0,
-  clearcoatRoughness: 0.04,
-  transmission: 0.2,
+  clearcoatRoughness: 0.02,
+  transmission: 0.08,
   reflectivity: 1.0,
   transparent: true,
-  opacity: 0.92,
+  opacity: 0.96,
   side: THREE.DoubleSide
 });
 
