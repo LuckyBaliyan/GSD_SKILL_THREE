@@ -7,57 +7,11 @@
 
 import * as THREE from 'three';
 import { metalMaterial, glassMaterial, liquidMaterial, dialMaterial } from './materials.js';
+import { createSolarisGoggleModel } from './goggle.js';
 
-/**
- * Creates procedural luxury sunglasses with gold rims and tinted lenses.
- * 
- * @returns {THREE.Group} A Three.js Group containing sunglasses meshes
- */
-export function createSunglassesModel() {
-  const group = new THREE.Group();
-
-  // 1. Rims
-  const rimGeo = new THREE.TorusGeometry(0.55, 0.045, 20, 36);
-  const leftRim = new THREE.Mesh(rimGeo, metalMaterial);
-  leftRim.position.set(-0.68, 0, 0);
-  const rightRim = new THREE.Mesh(rimGeo, metalMaterial);
-  rightRim.position.set(0.68, 0, 0);
-  group.add(leftRim, rightRim);
-
-  // 2. Lenses
-  const lensGeo = new THREE.CylinderGeometry(0.52, 0.52, 0.02, 28);
-  lensGeo.rotateX(Math.PI / 2);
-  const leftLens = new THREE.Mesh(lensGeo, glassMaterial);
-  leftLens.position.set(-0.68, 0, 0);
-  const rightLens = new THREE.Mesh(lensGeo, glassMaterial);
-  rightLens.position.set(0.68, 0, 0);
-  group.add(leftLens, rightLens);
-
-  // 3. Bridge & Brow Bar
-  const bridgeGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.32, 16);
-  bridgeGeo.rotateZ(Math.PI / 2);
-  const bridge = new THREE.Mesh(bridgeGeo, metalMaterial);
-  bridge.position.set(0, 0.08, 0);
-
-  const browGeo = new THREE.CylinderGeometry(0.025, 0.025, 1.8, 16);
-  browGeo.rotateZ(Math.PI / 2);
-  const brow = new THREE.Mesh(browGeo, metalMaterial);
-  brow.position.set(0, 0.52, 0);
-  group.add(bridge, brow);
-
-  // 4. Temples (Arms)
-  const templeGeo = new THREE.CylinderGeometry(0.03, 0.02, 1.4, 16);
-  templeGeo.rotateX(Math.PI / 2);
-  const leftTemple = new THREE.Mesh(templeGeo, metalMaterial);
-  leftTemple.position.set(-1.22, 0.1, -0.68);
-  const rightTemple = new THREE.Mesh(templeGeo, metalMaterial);
-  rightTemple.position.set(1.22, 0.1, -0.68);
-  group.add(leftTemple, rightTemple);
-
-  group.rotation.set(0.1, -0.2, 0);
-  group.scale.set(1.15, 1.15, 1.15);
-  return group;
-}
+// Re-export modern aerodynamic goggle model
+export { createSolarisGoggleModel };
+export const createSunglassesModel = createSolarisGoggleModel;
 
 /**
  * Creates a procedural faceted luxury perfume bottle with liquid essence.
@@ -151,7 +105,6 @@ export function createWatchModel() {
     group.add(topLink, bottomLink);
   }
 
-  // Tilt watch so user sees both the dial and the bracelet clearly
   group.rotation.set(0.65, -0.35, 0.2);
   group.scale.set(1.1, 1.1, 1.1);
   return group;

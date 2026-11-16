@@ -18,7 +18,8 @@ export const FINISH_PALETTES = {
     clearcoat: 0.6,
     glass: 0x111116,
     liquid: 0xd49a37,
-    dial: 0x0f0f14
+    dial: 0x0f0f14,
+    shield: 0xf5a623 // Radiant golden-amber mirror from reference photo
   },
   noir: {
     name: 'Midnight Noir',
@@ -28,7 +29,8 @@ export const FINISH_PALETTES = {
     clearcoat: 0.3,
     glass: 0x0a0a0c,
     liquid: 0x222228,
-    dial: 0x141418
+    dial: 0x141418,
+    shield: 0x2c2c34 // Stealth black iridium mirror
   },
   rose: {
     name: 'Champagne Rose',
@@ -38,7 +40,8 @@ export const FINISH_PALETTES = {
     clearcoat: 0.65,
     glass: 0x261418,
     liquid: 0xde8c68,
-    dial: 0x1a1114
+    dial: 0x1a1114,
+    shield: 0xe07a5f // Sunset rose-copper iridium mirror
   }
 };
 
@@ -51,7 +54,35 @@ export const metalMaterial = new THREE.MeshPhysicalMaterial({
   clearcoatRoughness: 0.1
 });
 
-// 2. Shared Glass Material (Sunglasses lenses and perfume bottle glass)
+// 2. High-Tech Panoramic Shield Visor Material (Iridium Mirror Reflective PBR)
+export const shieldLensMaterial = new THREE.MeshPhysicalMaterial({
+  color: FINISH_PALETTES.gold.shield,
+  metalness: 0.88,
+  roughness: 0.05,
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.04,
+  transmission: 0.2,
+  reflectivity: 1.0,
+  transparent: true,
+  opacity: 0.92,
+  side: THREE.DoubleSide
+});
+
+// 3. Matte Carbon Brow Frame & Temples Material
+export const carbonFrameMaterial = new THREE.MeshStandardMaterial({
+  color: 0x18181c,
+  roughness: 0.42,
+  metalness: 0.3
+});
+
+// 4. Soft Rubber Nosepad Material
+export const rubberMaterial = new THREE.MeshStandardMaterial({
+  color: 0x111114,
+  roughness: 0.85,
+  metalness: 0.05
+});
+
+// 5. Shared Glass Material (Perfume bottle glass)
 export const glassMaterial = new THREE.MeshPhysicalMaterial({
   color: FINISH_PALETTES.gold.glass,
   metalness: 0.1,
@@ -62,7 +93,7 @@ export const glassMaterial = new THREE.MeshPhysicalMaterial({
   reflectivity: 0.9
 });
 
-// 3. Shared Liquid Essence Material (Inside perfume bottle)
+// 6. Shared Liquid Essence Material (Inside perfume bottle)
 export const liquidMaterial = new THREE.MeshPhysicalMaterial({
   color: FINISH_PALETTES.gold.liquid,
   metalness: 0.05,
@@ -72,7 +103,7 @@ export const liquidMaterial = new THREE.MeshPhysicalMaterial({
   opacity: 0.9
 });
 
-// 4. Shared Minimalist Dial Material (Watch face)
+// 7. Shared Minimalist Dial Material (Watch face)
 export const dialMaterial = new THREE.MeshStandardMaterial({
   color: FINISH_PALETTES.gold.dial,
   roughness: 0.4,
@@ -95,10 +126,11 @@ export function applyFinish(finishKey) {
   metalMaterial.roughness = palette.roughness;
   metalMaterial.clearcoat = palette.clearcoat;
 
-  // Update glass and lens transmission surfaces
-  glassMaterial.color.setHex(palette.glass);
+  // Update high-tech shield lens mirror color
+  shieldLensMaterial.color.setHex(palette.shield);
 
-  // Update liquid essence
+  // Update perfume bottle glass and liquid
+  glassMaterial.color.setHex(palette.glass);
   liquidMaterial.color.setHex(palette.liquid);
 
   // Update watch dial face
