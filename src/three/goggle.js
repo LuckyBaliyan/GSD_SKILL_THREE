@@ -49,7 +49,10 @@ function createVisorMesh() {
   }
 
   planeGeo.computeVertexNormals();
-  return new THREE.Mesh(planeGeo, shieldLensMaterial);
+  planeGeo.computeBoundingSphere();
+  const visorMesh = new THREE.Mesh(planeGeo, shieldLensMaterial);
+  visorMesh.frustumCulled = false;
+  return visorMesh;
 }
 
 /**

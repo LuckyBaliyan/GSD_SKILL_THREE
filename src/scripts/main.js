@@ -35,9 +35,16 @@ function initApp() {
     { name: 'Chrono Obsidian', group: createWatchModel(), baseScale: 1.1 }
   ];
 
-  // 3. Initialize Model Switcher Controller
+  // 3. Initialize Model Switcher Controller and disable frustum culling
   const modelSwitcher = createModelSwitcher(rootGroup, modelConfigs, (newIndex) => {
     updateActivePill(newIndex);
+  });
+
+  // Ensure 3D meshes are never accidentally culled/hidden during rapid rotation
+  rootGroup.traverse((child) => {
+    if (child.isMesh) {
+      child.frustumCulled = false;
+    }
   });
 
   // 4. Start 60 FPS Render Loop with 360° Drag & Parallax
