@@ -1,123 +1,104 @@
 /**
  * goggle.js — Modern Aerodynamic Shield Goggle Model
  * 
- * Procedural 3D model inspired by futuristic luxury performance eyewear (Oakley Kato/Sutro style).
- * Features a single panoramic wrap-around shield visor with nose cutout, carbon brow frame,
- * sculpted nose bridge, and aerodynamic temples with metallic oval emblems.
+ * High-precision procedural 3D model inspired by Oakley Kato shield visors.
+ * Unified parametric curvature ensures all components (visor, brow bar,
+ * nose bridge, and temple arms) align seamlessly around a single origin.
  */
 
 import * as THREE from 'three';
 import { shieldLensMaterial, carbonFrameMaterial, rubberMaterial, metalMaterial } from './materials.js';
 
 /**
- * Creates the futuristic aerodynamic luxury shield goggle model.
- * 
- * @returns {THREE.Group} Group containing the complete goggle assembly
+ * Creates and returns the fully assembled 3D goggle group.
  */
 export function createSolarisGoggleModel() {
   const goggleGroup = new THREE.Group();
 
-  // 1. Panoramic Wrap-Around Shield Visor (Monolens)
-  const visorMesh = createVisorMesh();
-  goggleGroup.add(visorMesh);
+  goggleGroup.add(createVisorMesh());
+  goggleGroup.add(createBrowBar());
+  goggleGroup.add(createNoseBridge());
+  goggleGroup.add(createTemples());
 
-  // 2. Aerodynamic Matte Carbon Brow Bar
-  const browBar = createBrowBar();
-  goggleGroup.add(browBar);
-
-  // 3. Sculpted Nose Bridge & Pads
-  const noseBridge = createNoseBridge();
-  goggleGroup.add(noseBridge);
-
-  // 4. Modern Aerodynamic Temples with Metallic Oval Emblems
-  const temples = createTemples();
-  goggleGroup.add(temples);
-
-  // Set initial 3/4 heroic orientation and scale
-  goggleGroup.rotation.set(0.12, -0.28, 0);
-  goggleGroup.scale.set(1.25, 1.25, 1.25);
-
+  goggleGroup.position.set(0, 0, 0.3);
+  goggleGroup.scale.set(1.15, 1.15, 1.15);
   return goggleGroup;
 }
 
 /**
- * Constructs the sculpted continuous wrap-around shield visor geometry.
- * Customizes cylinder vertices to create the nose cutout and aerodynamic sweep.
+ * Creates the curved wrap-around shield visor by bending a PlaneGeometry.
+ * Uses parabolic formula z = -(x^2) * 0.38 for aerodynamic wrap.
  */
 function createVisorMesh() {
-  const radius = 1.35;
-  const height = 0.88;
-  const visorGeo = new THREE.CylinderGeometry(radius, radius * 1.02, height, 48, 16, true, Math.PI * 0.15, Math.PI * 0.7);
+  const planeGeo = new THREE.PlaneGeometry(2.6, 0.9, 40, 20);
+  const pos = planeGeo.attributes.position;
 
-  const pos = visorGeo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     let x = pos.getX(i);
     let y = pos.getY(i);
-    let z = pos.getZ(i);
+    const z = -(x * x) * 0.38;
 
-    // Sculpt nose cutout arch in bottom center
-    if (Math.abs(x) < 0.28 && y < 0.05) {
-      const arch = Math.cos((x / 0.28) * (Math.PI / 2));
-      y += 0.32 * arch;
+    // Sculpt nose arch in bottom center
+    if (Math.abs(x) < 0.28 && y < 0.08) {
+      y += 0.28 * Math.cos((x / 0.28) * (Math.PI / 2));
     }
-
-    // Aerodynamic bottom sweep towards flanks
-    if (Math.abs(x) > 0.6) {
-      const flankFactor = (Math.abs(x) - 0.6) / 0.6;
-      y += 0.08 * flankFactor;
-    }
+    // Gentle upward brow lift
+    y += 0.04 * Math.cos(x * 1.1);
 
     pos.setXYZ(i, x, y, z);
   }
 
-  visorGeo.computeVertexNormals();
-  const visor = new THREE.Mesh(visorGeo, shieldLensMaterial);
-  visor.position.set(0, 0, 0);
-  return visor;
+  planeGeo.computeVertexNormals();
+  return new THREE.Mesh(planeGeo, shieldLensMaterial);
 }
 
 /**
- * Creates the curved matte carbon brow frame that hugs the top edge of the visor.
+ * Creates the curved carbon brow frame hugging the top edge of the visor.
  */
 function createBrowBar() {
   const browGroup = new THREE.Group();
+  const curvePoints = [];
 
-  // Top curved rim bar
-  const rimGeo = new THREE.TorusGeometry(1.36, 0.038, 16, 48, Math.PI * 0.7);
-  const rimMesh = new THREE.Mesh(rimGeo, carbonFrameMaterial);
-  rimMesh.rotation.set(Math.PI / 2, 0, Math.PI * 0.65);
-  rimMesh.position.set(0, 0.44, 0);
-  browGroup.add(rimMesh);
+  for (let i = 0; i <= 24; i++) {
+    const t = i / 24;
+    const x = -1.32 + t * 2.64;
+    const y = 0.46 + 0.04 * Math.cos(x * 1.1);
+    const z = -(x * x) * 0.38 - 0.01;
+    curvePoints.push(new THREE.Vector3(x, y, z));
+  }
 
-  // Central aerodynamic brow vent slot
-  const ventGeo = new THREE.BoxGeometry(0.16, 0.04, 0.06);
+  const browCurve = new THREE.CatmullRomCurve3(curvePoints);
+  const tubeGeo = new THREE.TubeGeometry(browCurve, 32, 0.038, 12, false);
+  browGroup.add(new THREE.Mesh(tubeGeo, carbonFrameMaterial));
+
+  // Central aerodynamic vent slot above nose
+  const ventGeo = new THREE.BoxGeometry(0.18, 0.045, 0.06);
   const ventMesh = new THREE.Mesh(ventGeo, carbonFrameMaterial);
-  ventMesh.position.set(0, 0.36, 1.34);
+  ventMesh.position.set(0, 0.42, 0.02);
   browGroup.add(ventMesh);
 
   return browGroup;
 }
 
 /**
- * Creates the ergonomic sculpted rubber nose bridge nestled in the visor cutout.
+ * Creates the sculpted rubber nose bridge and soft pads.
  */
 function createNoseBridge() {
   const noseGroup = new THREE.Group();
 
-  // Central bridge housing
-  const bridgeGeo = new THREE.CylinderGeometry(0.08, 0.12, 0.26, 16);
+  const bridgeGeo = new THREE.BoxGeometry(0.14, 0.24, 0.12);
   const bridgeMesh = new THREE.Mesh(bridgeGeo, rubberMaterial);
-  bridgeMesh.position.set(0, -0.06, 1.28);
+  bridgeMesh.position.set(0, 0.04, 0.01);
+  bridgeMesh.rotation.x = 0.15;
   noseGroup.add(bridgeMesh);
 
-  // Soft nosepads (left and right)
-  const padGeo = new THREE.BoxGeometry(0.06, 0.18, 0.1);
+  const padGeo = new THREE.BoxGeometry(0.06, 0.18, 0.08);
   const leftPad = new THREE.Mesh(padGeo, rubberMaterial);
-  leftPad.position.set(-0.1, -0.16, 1.24);
+  leftPad.position.set(-0.09, -0.06, -0.04);
   leftPad.rotation.z = -0.25;
 
   const rightPad = new THREE.Mesh(padGeo, rubberMaterial);
-  rightPad.position.set(0.1, -0.16, 1.24);
+  rightPad.position.set(0.09, -0.06, -0.04);
   rightPad.rotation.z = 0.25;
 
   noseGroup.add(leftPad, rightPad);
@@ -125,7 +106,7 @@ function createNoseBridge() {
 }
 
 /**
- * Creates the sculpted aerodynamic temples with metallic oval logo emblems.
+ * Creates aerodynamic carbon temples with metallic oval emblems on each flank.
  */
 function createTemples() {
   const templesGroup = new THREE.Group();
@@ -133,23 +114,23 @@ function createTemples() {
   [-1, 1].forEach((side) => {
     const temple = new THREE.Group();
 
-    // Sculpted angular temple arm
-    const armGeo = new THREE.BoxGeometry(0.06, 0.14, 1.4);
+    // Angular temple arm
+    const armGeo = new THREE.BoxGeometry(0.06, 0.13, 1.25);
     const armMesh = new THREE.Mesh(armGeo, carbonFrameMaterial);
-    armMesh.position.set(0, 0, -0.7);
+    armMesh.position.set(0, 0, -0.625);
     temple.add(armMesh);
 
-    // Iconic metallic oval emblem on flank (matching reference image)
-    const emblemGeo = new THREE.TorusGeometry(0.045, 0.012, 12, 24);
+    // Metallic oval emblem on flank
+    const emblemGeo = new THREE.TorusGeometry(0.04, 0.01, 12, 24);
     const emblemMesh = new THREE.Mesh(emblemGeo, metalMaterial);
-    emblemMesh.scale.set(1.8, 1, 1); // Oval stretch
+    emblemMesh.scale.set(1.8, 1, 1);
     emblemMesh.rotation.y = Math.PI / 2;
     emblemMesh.position.set(side * 0.035, 0.01, -0.22);
     temple.add(emblemMesh);
 
-    // Position temple on the goggle flank
-    temple.position.set(side * 1.22, 0.28, 0.58);
-    temple.rotation.y = side * 0.12;
+    // Anchor temple to the visor edge
+    temple.position.set(side * 1.32, 0.42, -0.65);
+    temple.rotation.y = side * -0.08;
     templesGroup.add(temple);
   });
 
