@@ -1,0 +1,62 @@
+/*
+  Design Tokens: AURA 3D Luxury Landing Page
+  Contains centralized CSS variables for colors, typography, spacing, radii, and transitions.
+*/
+
+:root {
+  /* Colors - 60% Dominant: Obsidian Black */
+  --color-bg: #0a0a0c;
+  --color-bg-alt: #0e0e12;
+
+  /* Colors - 30% Secondary: Deep Charcoal Surface */
+  --color-surface: #141418;
+  --color-surface-hover: #1c1c22;
+  --color-surface-glass: rgba(20, 20, 24, 0.75);
+
+  /* Colors - 10% Accent: Champagne Gold */
+  --color-accent: #d4af37;
+  --color-accent-light: #f3e5ab;
+  --color-accent-glow: rgba(212, 175, 55, 0.25);
+
+  /* Typography Colors */
+  --color-text-primary: #f5f5f7;
+  --color-text-muted: #8e8e99;
+  --color-text-dim: #5c5c66;
+
+  /* Borders & Dividers */
+  --color-border: rgba(212, 175, 55, 0.15);
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+
+  /* Typography Scales */
+  --font-display: 'Cinzel', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  /* Spacing Scale (Multiples of 4) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Corner Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows & Glows */
+  --shadow-gold: 0 4px 20px rgba(212, 175, 55, 0.15);
+  --shadow-subtle: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Z-Index Hierarchy */
+  --z-canvas: 1;
+  --z-overlay: 10;
+  --z-header: 100;
+  --z-modal: 1000;
+}

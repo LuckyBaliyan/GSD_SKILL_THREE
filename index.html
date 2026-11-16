@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA — 3D Luxury Wearables & Fragrance</title>
+  <meta name="description" content="An immersive 3D luxury landing experience showcasing sculpted human wearables, fine eyewear, and haute fragrances.">
+  
+  <!-- Google Fonts: Cinzel (Display) & Plus Jakarta Sans (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Design Tokens & Styles -->
+  <link rel="stylesheet" href="./src/styles/tokens.css">
+  <link rel="stylesheet" href="./src/styles/base.css">
+  <link rel="stylesheet" href="./src/styles/header.css">
+  <link rel="stylesheet" href="./src/styles/hero.css">
+</head>
+<body>
+
+  <!-- Site Navigation Header -->
+  <header class="site-header" role="banner">
+    <div class="header-container">
+      <a href="#hero" class="brand-logo" aria-label="AURA Home">
+        <span class="logo-mark">AURA</span>
+        <span class="logo-sub">ATELIER</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="#hero" class="nav-link active">Edition</a>
+        <a href="#collections" class="nav-link">Creations</a>
+        <a href="#craftsmanship" class="nav-link">Craftsmanship</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="bag-button" id="cart-btn" aria-label="Shopping Bag, 0 items">
+          <svg class="bag-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+            <path d="M3 6h18"></path>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="bag-count" id="cart-count" aria-hidden="true">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <!-- Hero 3D Section -->
+    <section class="hero-section" id="hero" aria-label="Hero 3D Showcase">
+      <!-- 3D WebGL Canvas Container -->
+      <div id="webgl-container" aria-label="3D Interactive Luxury Viewport" role="region"></div>
+
+      <!-- Hero Content Overlay -->
+      <div class="hero-overlay">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          AUTUMN / WINTER 2026 EDITION
+        </div>
+
+        <h1 class="hero-title">
+          SCULPTED FOR<br>
+          <span class="text-gold">THE SENSES</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Pure metallic geometry meets tactile human contours. An avant-garde exploration of wearable luxury eyewear, horology, and essence.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#collections" class="btn btn-primary" aria-label="Explore Collection">
+            <span>Explore Collection</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+          <a href="#craftsmanship" class="btn btn-secondary" aria-label="View Craftsmanship">
+            <span>View Craftsmanship</span>
+          </a>
+        </div>
+
+        <div class="hero-interaction-hint" aria-hidden="true">
+          <span class="hint-icon">✦</span>
+          <span>Move cursor to tilt • Interactive 3D Model</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Application Entry Script -->
+  <script type="module" src="./src/scripts/main.js"></script>
+</body>
+</html>
